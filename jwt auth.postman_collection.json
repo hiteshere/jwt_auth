@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "7cccbc34-e45f-42fc-ad9a-f50f48756539",
+		"name": "jwt auth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Obtain token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "hitehs@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "hitesh@123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8002/user/obtain_token/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8002",
+					"path": [
+						"user",
+						"obtain_token",
+						""
+					]
+				},
+				"description": "create user"
+			},
+			"response": []
+		},
+		{
+			"name": "create user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"disabled": true
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "hitehs@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "hitesh@123",
+							"type": "text"
+						},
+						{
+							"key": "first_name",
+							"value": "hitesh",
+							"type": "text"
+						},
+						{
+							"key": "last_name",
+							"value": "kataria",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8002/user/create/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8002",
+					"path": [
+						"user",
+						"create",
+						""
+					]
+				},
+				"description": "create user"
+			},
+			"response": []
+		},
+		{
+			"name": "get details",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhpdGVoc0BnbWFpbC5jb20iLCJ1c2VyX2lkIjoyLCJlbWFpbCI6ImhpdGVoc0BnbWFpbC5jb20iLCJleHAiOjE1MzQ5NDU4MTF9.xV1wX2sHyzRpQgDaarmYysnN-k3zirDD2nTqXYO1MAY"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:8002/user/update/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8002",
+					"path": [
+						"user",
+						"update",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update details",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhpdGVoc0BnbWFpbC5jb20iLCJ1c2VyX2lkIjoyLCJlbWFpbCI6ImhpdGVoc0BnbWFpbC5jb20iLCJleHAiOjE1MzQ5NDU4MTF9.xV1wX2sHyzRpQgDaarmYysnN-k3zirDD2nTqXYO1MAY"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "last_name",
+							"value": "kumar",
+							"type": "text"
+						},
+						{
+							"key": "first_name",
+							"value": "Hitesh",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8002/user/update/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8002",
+					"path": [
+						"user",
+						"update",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

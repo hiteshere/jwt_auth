@@ -15,9 +15,11 @@ class UserSerializer(serializers.ModelSerializer):
             intial_data = dict(self.initial_data)
             serializer = JobSerializer(data={'company_name': intial_data['company_name'][0],
                                              'company_type': intial_data['company_type'][0],
-                                             'designation': intial_data['designation'][0]
+                                             'designation': intial_data['designation'][0],
+                                             'email': intial_data['email'][0],
                                              })
             if serializer.is_valid():
+                Job.objects.create(user=obj)
                 serializer.save()
             else:
                 raise serializers.ValidationError(serializer.errors)
@@ -38,6 +40,7 @@ class JobSerializer(serializers.ModelSerializer):
                                                        })
     company_type = serializers.CharField(max_length=127)
     designation = serializers.CharField(max_length=127)
+    email = serializers.CharField(max_length=127)
 
     def create(self, validated_data):
         """
@@ -45,7 +48,10 @@ class JobSerializer(serializers.ModelSerializer):
         :param validated_data: validated data
         :return: user-address instance
         """
-        job_obj = Job.objects.create(**validated_data)
+        job_obj = Job.objects.get(user__email=validated_data['email'])
+        for attr, value in validated_data.items():
+            setattr(job_obj, attr, value)
+        job_obj.save()
         return job_obj
 
     def update(self, instance, validated_data):
@@ -65,4 +71,4 @@ class JobSerializer(serializers.ModelSerializer):
         Define fields for this serializer
         """
         model = Job
-        fields = ('id', 'company_name', 'company_type', 'designation')
+        fields = ('id', 'company_name', 'company_type', 'designation', 'email')

@@ -61,3 +61,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         "Returns the short name for the user."
         return self.first_name
+
+
+class Job(models.Model):
+    user = models.ForeignKey(User, null=True, blank=True,  related_name='user_job')
+    company_name = models.CharField(max_length=50, blank=True, null=True)
+    company_type = models.CharField(max_length=50, blank=True, null=True)
+    designation = models.CharField(max_length=50, blank=True, null=True)
+
+    REQUIRED_FIELDS = ['company_name', 'company_type', 'designation']
+
+    class Meta:
+        """
+        Define database table name for model, verbose_name, verbose_name_plural
+        """
+        verbose_name = ('Job')
+        verbose_name_plural = ('Users Job')
+        db_table = 'Job'

@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Login",
+			"name": "Obtain token",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -75,7 +75,7 @@
 					"formdata": [
 						{
 							"key": "email",
-							"value": "kumar1@gmail.com",
+							"value": "katari17@gmail.com",
 							"type": "text"
 						},
 						{
@@ -96,17 +96,17 @@
 						},
 						{
 							"key": "company_name",
-							"value": "",
+							"value": "Kiwi",
 							"type": "text"
 						},
 						{
 							"key": "company_type",
-							"value": "",
+							"value": "Spiritual",
 							"type": "text"
 						},
 						{
 							"key": "designation",
-							"value": "",
+							"value": "Software developer",
 							"type": "text"
 						}
 					]

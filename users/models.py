@@ -60,7 +60,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self
 
     def get_short_name(self):
-        "Returns the short name for the user."
         return self.first_name
 
 
@@ -70,6 +69,7 @@ class Job(models.Model):
     company_name = models.CharField(max_length=50, blank=True, null=True)
     company_type = models.CharField(choices=constant.COMPANY_TYPE, max_length=50, blank=True, null=True)
     designation = models.CharField(max_length=50, blank=True, null=True)
+    resume = models.FileField(null=True)
 
     REQUIRED_FIELDS = ['company_name', 'company_type', 'designation']
 

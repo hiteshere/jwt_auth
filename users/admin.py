@@ -18,5 +18,8 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_delete', 'date_joined')
 
 
+class JobAdmin(admin.ModelAdmin):
+    list_display = ('company_name', 'company_type', 'resume', 'designation')
+
 admin.site.register(User, UserAdmin)
-admin.site.register(Job)
+admin.site.register(Job, JobAdmin)

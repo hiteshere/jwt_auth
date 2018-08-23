@@ -16,6 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
             serializer = JobSerializer(data={'company_name': intial_data['company_name'][0],
                                              'company_type': intial_data['company_type'][0],
                                              'designation': intial_data['designation'][0],
+                                             'resume': intial_data['resume'][0],
                                              'email': intial_data['email'][0],
                                              })
             if serializer.is_valid():
@@ -38,9 +39,9 @@ class JobSerializer(serializers.ModelSerializer):
                                                        "required": "Company name is required",
                                                        "max_length": "Company name should be of maximum 127 characters"
                                                        })
-    company_type = serializers.CharField(max_length=127)
+    company_type = serializers.ChoiceField(choices=constant.COMPANY_TYPE)
     designation = serializers.CharField(max_length=127)
-    email = serializers.CharField(max_length=127)
+    email = serializers.CharField(max_length=127, allow_null=True)
 
     def create(self, validated_data):
 
@@ -62,4 +63,4 @@ class JobSerializer(serializers.ModelSerializer):
         Define fields for this serializer
         """
         model = Job
-        fields = ('id', 'company_name', 'company_type', 'designation', 'email')
+        fields = ('id', 'company_name', 'company_type', 'designation', 'email', 'resume')

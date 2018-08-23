@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
                   'date_joined', 'user_job', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-
+from mutual import constant
 class JobSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(
         required=True, max_length=127, error_messages={"blank": "Company name is required",
@@ -43,11 +43,7 @@ class JobSerializer(serializers.ModelSerializer):
     email = serializers.CharField(max_length=127)
 
     def create(self, validated_data):
-        """
 
-        :param validated_data: validated data
-        :return: user-address instance
-        """
         job_obj = Job.objects.get(user__email=validated_data['email'])
         for attr, value in validated_data.items():
             setattr(job_obj, attr, value)
@@ -55,12 +51,7 @@ class JobSerializer(serializers.ModelSerializer):
         return job_obj
 
     def update(self, instance, validated_data):
-        """
-        Update address instance with validate data.
-        :param instance: user-address instance
-        :param validated_data: validated data
-        :return: updated user-address
-        """
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()

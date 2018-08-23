@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
+from mutual import constant
 
 
 class UserManager(BaseUserManager):
@@ -64,9 +65,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Job(models.Model):
-    user = models.ForeignKey(User, null=True, blank=True,  related_name='user_job')
+
+    user = models.ForeignKey(User, null=True, blank=True, related_name='user_job')
     company_name = models.CharField(max_length=50, blank=True, null=True)
-    company_type = models.CharField(max_length=50, blank=True, null=True)
+    company_type = models.CharField(choices=constant.COMPANY_TYPE, max_length=50, blank=True, null=True)
     designation = models.CharField(max_length=50, blank=True, null=True)
 
     REQUIRED_FIELDS = ['company_name', 'company_type', 'designation']

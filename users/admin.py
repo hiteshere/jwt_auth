@@ -17,5 +17,6 @@ class UserAdmin(admin.ModelAdmin):
     exclude = ('groups', 'user_permissions', 'is_superuser')
     list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_delete', 'date_joined')
 
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Job)

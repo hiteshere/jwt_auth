@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "Obtain token",
+			"name": "Login",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -75,7 +75,7 @@
 					"formdata": [
 						{
 							"key": "email",
-							"value": "hitehs@gmail.com",
+							"value": "kumar1@gmail.com",
 							"type": "text"
 						},
 						{
@@ -86,11 +86,27 @@
 						{
 							"key": "first_name",
 							"value": "hitesh",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "last_name",
 							"value": "kataria",
+							"type": "text"
+						},
+						{
+							"key": "company_name",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "company_type",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "designation",
+							"value": "",
 							"type": "text"
 						}
 					]

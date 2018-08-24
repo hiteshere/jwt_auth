@@ -75,7 +75,7 @@
 					"formdata": [
 						{
 							"key": "email",
-							"value": "katari17@gmail.com",
+							"value": "kumar3@gmail.com",
 							"type": "text"
 						},
 						{
@@ -101,13 +101,17 @@
 						},
 						{
 							"key": "company_type",
-							"value": "Spiritual",
+							"value": "SPIRITUAL",
 							"type": "text"
 						},
 						{
 							"key": "designation",
 							"value": "Software developer",
 							"type": "text"
+						},
+						{
+							"key": "resume",
+							"type": "file"
 						}
 					]
 				},

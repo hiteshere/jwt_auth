@@ -69,6 +69,8 @@ class Job(models.Model):
     company_type = models.CharField(choices=constant.COMPANY_TYPE, max_length=127, blank=True, null=True)
     designation = models.CharField(max_length=50, blank=True, null=True)
     resume = models.FileField(null=True, blank=True)
+    # activey_looking = models.BooleanField(default=True)
+    # required_designation = models.CharField(choices=constant.REQUIRED_DESIGNATION, max_length=50, blank=True, null=True)
 
     REQUIRED_FIELDS = ['company_name', 'company_type', 'designation']
 
@@ -76,6 +78,20 @@ class Job(models.Model):
         """
         Define database table name for model, verbose_name, verbose_name_plural
         """
-        verbose_name = ('Job')
-        verbose_name_plural = ('Users Job')
+        verbose_name = 'Job'
+        verbose_name_plural = 'Users Job'
         db_table = 'Job'
+
+#
+# class Employer(models.Model):
+#     company_name = models.CharField(max_length=127, blank=True, null=True)
+#     company_type = models.CharField(choices=constant.COMPANY_TYPE, max_length=127, blank=True, null=True)
+#     vacant_positions = models.CharField(max_length=256, blank=True, null=True)
+#
+#     class Meta:
+#         """
+#         Define database table name for model, verbose_name, verbose_name_plural
+#         """
+#         verbose_name = 'Employer'
+#         verbose_name_plural = 'Employer'
+#         db_table = 'Employer'

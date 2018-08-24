@@ -64,12 +64,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Job(models.Model):
-
     user = models.ForeignKey(User, null=True, blank=True, related_name='user_job')
-    company_name = models.CharField(max_length=50, blank=True, null=True)
-    company_type = models.CharField(choices=constant.COMPANY_TYPE, max_length=50, blank=True, null=True)
+    company_name = models.CharField(max_length=127, blank=True, null=True)
+    company_type = models.CharField(choices=constant.COMPANY_TYPE, max_length=127, blank=True, null=True)
     designation = models.CharField(max_length=50, blank=True, null=True)
-    resume = models.FileField(null=True)
+    resume = models.FileField(null=True, blank=True)
 
     REQUIRED_FIELDS = ['company_name', 'company_type', 'designation']
 

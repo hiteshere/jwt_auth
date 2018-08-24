@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from users.models import User, Job
+from mutual import constant
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,15 +13,16 @@ class UserSerializer(serializers.ModelSerializer):
             user_job_qs = user_job_qs.first()
             serializer = JobSerializer(user_job_qs)
         else:
-            intial_data = dict(self.initial_data)
-            serializer = JobSerializer(data={'company_name': intial_data['company_name'][0],
-                                             'company_type': intial_data['company_type'][0],
-                                             'designation': intial_data['designation'][0],
-                                             'resume': intial_data['resume'][0],
-                                             'email': intial_data['email'][0],
+            intial_data = self.initial_data.dict()
+            serializer = JobSerializer(data={'company_name': intial_data.get('company_name', None),
+                                             'company_type': intial_data.get('company_type', None),
+                                             'designation': intial_data.get('designation', None),
+                                             'resume': intial_data.get('resume', None)
                                              })
             if serializer.is_valid():
-                Job.objects.create(user=obj)
+                serializer.save()
+                # Updating instance for the user for its job object
+                serializer.instance.user = obj
                 serializer.save()
             else:
                 raise serializers.ValidationError(serializer.errors)
@@ -32,20 +34,17 @@ class UserSerializer(serializers.ModelSerializer):
                   'date_joined', 'user_job', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-from mutual import constant
+
 class JobSerializer(serializers.ModelSerializer):
     company_name = serializers.CharField(
-        required=True, max_length=127, error_messages={"blank": "Company name is required",
-                                                       "required": "Company name is required",
-                                                       "max_length": "Company name should be of maximum 127 characters"
-                                                       })
-    company_type = serializers.ChoiceField(choices=constant.COMPANY_TYPE)
-    designation = serializers.CharField(max_length=127)
-    email = serializers.CharField(max_length=127, allow_null=True)
+        required=True, max_length=127, error_messages=constant.COMPANY_NAME_ERROR_MSG)
+    company_type = serializers.ChoiceField(choices=constant.COMPANY_TYPE,
+                                           error_messages=constant.COMPANY_TYPE_ERROR_MSG)
+    designation = serializers.CharField(max_length=127, error_messages=constant.DESIGNATION_ERROR_MSG)
 
     def create(self, validated_data):
 
-        job_obj = Job.objects.get(user__email=validated_data['email'])
+        job_obj = Job.objects.create()
         for attr, value in validated_data.items():
             setattr(job_obj, attr, value)
         job_obj.save()
@@ -63,4 +62,4 @@ class JobSerializer(serializers.ModelSerializer):
         Define fields for this serializer
         """
         model = Job
-        fields = ('id', 'company_name', 'company_type', 'designation', 'email', 'resume')
+        fields = ('id', 'company_name', 'company_type', 'designation', 'resume')

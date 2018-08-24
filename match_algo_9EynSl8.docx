@@ -1,0 +1,15 @@
+﻿Algorithm keypoints for matching on basis of string and id in Synde
+
+
+	As our form for both asset and preference are multi level selection form which makes the upper values i.e parent selections and their childs as the sub selections. Values from Sponsor/Intermediary with Lender participate in matching regarding there selections based on parents selection and sub selections.
+
+	This can be done with 2 ways either matching id's of particular selection with another or by matching the question directly.
+
+
+1. Matching algorithm make use of both the options for the matching by keeping id's for the parent selections and string for sub selections. Reason behind this is to keep linear database structure for further improvement in matching algorithm as matching entire selections on basis of id's will bound our algorithm. With limitation for addition of further selections and will requires to keep a separate indexing every time any change incorporated.
+
+
+2. Every time any values needs to be changes for any selection the id's need to be rearranged according to the values which are previously saved in our system and rearranging values will be complex and prone to error which can impact the algorithm in numerous ways.
+
+
+3. Matching with string gives a wider view of what values are matching and which are not be matching with different condition we have in matching logic.

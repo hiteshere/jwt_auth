@@ -1,18 +1,17 @@
+from django.contrib.auth.signals import user_logged_in
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework_jwt.utils import jwt_payload_handler
+import jwt
+from jwt_auth import settings
 from .serializers import UserSerializer
 from .models import User
-from jwt_auth import settings
-import jwt
-from django.contrib.auth.signals import user_logged_in
 
 
 class CreateUserAPIView(APIView):
-    # Allow any user (authenticated or not) to access this url 
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):

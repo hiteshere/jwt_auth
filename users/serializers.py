@@ -17,16 +17,18 @@ class UserSerializer(serializers.ModelSerializer):
             serializer = JobSerializer(data={'company_name': intial_data.get('company_name', None),
                                              'company_type': intial_data.get('company_type', None),
                                              'designation': intial_data.get('designation', None),
-                                             'resume': intial_data.get('resume', None)
-                                             })
+                                             'resume': intial_data.get('resume', None),
+                                             'user': obj
+                                             },
+                                       context={'user': obj})
             if serializer.is_valid():
                 serializer.save()
                 # Updating instance for the user for its job object
-                serializer.instance.user = obj
-                serializer.save()
+                # serializer.instance.user = obj
+                # serializer.save()
             else:
                 raise serializers.ValidationError(serializer.errors)
-        return JobSerializer(serializer.data).data
+        return serializer.data
 
     class Meta(object):
         model = User
@@ -44,10 +46,7 @@ class JobSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
-        job_obj = Job.objects.create()
-        for attr, value in validated_data.items():
-            setattr(job_obj, attr, value)
-        job_obj.save()
+        job_obj = Job.objects.create(user= self.context.get('user'), **validated_data)
         return job_obj
 
     def update(self, instance, validated_data):
@@ -63,3 +62,8 @@ class JobSerializer(serializers.ModelSerializer):
         """
         model = Job
         fields = ('id', 'company_name', 'company_type', 'designation', 'resume')
+
+from django.db.models.signals import post_save
+from .signals import create_user_profile, create_user_job
+post_save.connect(create_user_profile, sender=User)
+post_save.connect(create_user_job, sender=Job)

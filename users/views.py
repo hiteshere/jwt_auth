@@ -85,8 +85,8 @@ class OtpCheckAPIView(RetrieveUpdateAPIView):
 
 def otp_check(user_id):
     # Your Account Sid and Auth Token from twilio.com/console
-    account_sid = 'AC53ea4d8ea0a6156709fb404a3c2a49f2'
-    auth_token = '5f9c52b90ebe13c9029d44ac8875e095'
+    account_sid = ''
+    auth_token = ''
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(

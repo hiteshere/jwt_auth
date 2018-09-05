@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework_jwt.utils import jwt_payload_handler
 import jwt
+from twilio.rest import Client
 from jwt_auth import settings
 from .serializers import UserSerializer, JobSerializer
 from .models import User, Job
@@ -19,6 +20,7 @@ class CreateUserAPIView(APIView):
         serializer = UserSerializer(data=user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        otp_check(serializer.data['id'])
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -69,6 +71,30 @@ class JobRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+class OtpCheckAPIView(RetrieveUpdateAPIView):
+    # Allow only authenticated users to access this url
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = JobSerializer
+
+    def post(self, request, *args, **kwargs):
+        if int(request.data['otp']) in list(User.objects.all().values_list('id', flat=True)):
+            return Response(request.data, status=status.HTTP_200_OK)
+        return Response(request.data, status=status.HTTP_404_NOT_FOUND)
+
+
+def otp_check(user_id):
+    # Your Account Sid and Auth Token from twilio.com/console
+    account_sid = 'AC53ea4d8ea0a6156709fb404a3c2a49f2'
+    auth_token = '5f9c52b90ebe13c9029d44ac8875e095'
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+        from_='+17653003821',
+        body=user_id,
+        to='+918076786402'
+    )
+
 @api_view(['POST'])
 # @permission_classes([permissions.AllowAny, ])
 def authenticate_user(request):
@@ -101,3 +127,6 @@ def authenticate_user(request):
     except KeyError:
         res = {'error': 'please provide a email and a password'}
         return Response(res)
+
+
+

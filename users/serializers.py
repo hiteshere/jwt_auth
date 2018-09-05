@@ -13,12 +13,13 @@ class UserSerializer(serializers.ModelSerializer):
             user_job_qs = user_job_qs.first()
             serializer = JobSerializer(user_job_qs)
         else:
-            intial_data = self.initial_data.dict()
+            # while using post man i need to use .dict()
+            # intial_data = self.initial_data.dict()
+            intial_data = self.initial_data
             serializer = JobSerializer(data={'company_name': intial_data.get('company_name', None),
                                              'company_type': intial_data.get('company_type', None),
                                              'designation': intial_data.get('designation', None),
-                                             'resume': intial_data.get('resume', None),
-                                             'user': obj
+                                             'resume': intial_data.get('resume', None)
                                              },
                                        context={'user': obj})
             if serializer.is_valid():
@@ -45,16 +46,23 @@ class JobSerializer(serializers.ModelSerializer):
     designation = serializers.CharField(max_length=127, error_messages=constant.DESIGNATION_ERROR_MSG)
 
     def create(self, validated_data):
-
-        job_obj = Job.objects.create(user= self.context.get('user'), **validated_data)
+        job_obj = Job.objects.create(user=self.context.get('user'), **validated_data)
         return job_obj
 
     def update(self, instance, validated_data):
-
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+    def to_representation(self, obj):
+        """
+        :param obj: job instance
+        :return: response to be modified here before returning as response
+        """
+        attr = super(JobSerializer, self).to_representation(obj)
+        attr.__setitem__("user_id", obj.user.id)
+        return attr
 
     class Meta:
         """
@@ -63,7 +71,9 @@ class JobSerializer(serializers.ModelSerializer):
         model = Job
         fields = ('id', 'company_name', 'company_type', 'designation', 'resume')
 
+
 from django.db.models.signals import post_save
 from .signals import create_user_profile, create_user_job
+
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(create_user_job, sender=Job)

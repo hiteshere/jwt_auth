@@ -50,6 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_delete = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
     verified = models.BooleanField(default=False)
+    otp = models.CharField(max_length=4, blank=True)
 
     objects = UserManager()
 

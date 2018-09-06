@@ -10,7 +10,7 @@ from twilio.rest import Client
 from jwt_auth import settings
 from .serializers import UserSerializer, JobSerializer
 from .models import User, Job
-
+import random
 
 class CreateUserAPIView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -20,7 +20,6 @@ class CreateUserAPIView(APIView):
         serializer = UserSerializer(data=user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        otp_check(serializer.data['id'])
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -78,12 +77,16 @@ class OtpCheckAPIView(RetrieveUpdateAPIView):
     serializer_class = JobSerializer
 
     def post(self, request, *args, **kwargs):
-        if request.data['otp'] and int(request.data['otp']) in list(User.objects.all().values_list('id', flat=True)):
-            user_qs = User.objects.filter(pk=int(request.data['otp']))
-            if user_qs[0].verified:
-                return Response({'error': 'User already verified. Please login.'}, status=status.HTTP_404_NOT_FOUND)
-            user_qs.update(verified = True)
-            return Response(request.data, status=status.HTTP_200_OK)
+        if request.data['otp'] and request.data['email']:
+            user_qs = User.objects.filter(email=request.data['email'])
+            if user_qs:
+                user_qs = user_qs[0]
+                if user_qs.verified:
+                    return Response({'error': 'User already verified. Please login.'}, status=status.HTTP_404_NOT_FOUND)
+                if user_qs.otp == request.data['otp']:
+                    user_qs.verified = True
+                    user_qs.save()
+                    return Response(request.data, status=status.HTTP_200_OK)
         return Response({'error': 'Not a valid OTP.'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -97,12 +100,15 @@ class OtpReCheckAPIView(APIView):
             user_qs = user_qs[0]
             if user_qs.verified:
                 return Response({'error': 'User already verified'}, status=status.HTTP_404_NOT_FOUND)
-            otp_check(user_qs.id)
+            new_otp = random.randint(1000, 9999)
+            user_qs.otp = new_otp
+            user_qs.save()
+            otp_check(new_otp)
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response({"details": "User does not exists."}, status=status.HTTP_404_NOT_FOUND)
 
 
-def otp_check(user_id):
+def otp_check(otp):
     # Your Account Sid and Auth Token from twilio.com/console
     account_sid = settings.TWILO_SECRET_SID[0]
     auth_token = settings.TWILO_SECRET_TOKEN[0]
@@ -110,9 +116,10 @@ def otp_check(user_id):
 
     message = client.messages.create(
         from_=settings.TWILO_MOBILE_NUMBER[0],
-        body=user_id,
+        body="User verification code is {}".format(str(otp)),
         to='+918076786402'
     )
+
 
 @api_view(['POST'])
 # @permission_classes([permissions.AllowAny, ])
@@ -150,6 +157,3 @@ def authenticate_user(request):
     except KeyError:
         res = {'error': 'please provide a email and a password'}
         return Response(res)
-
-
-

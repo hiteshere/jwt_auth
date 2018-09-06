@@ -1,11 +1,22 @@
 from rest_framework import serializers
 from users.models import User, Job
 from mutual import constant
+import random
+from users import views
 
 
 class UserSerializer(serializers.ModelSerializer):
     date_joined = serializers.ReadOnlyField()
+    otp = serializers.SerializerMethodField()
     user_job = serializers.SerializerMethodField()
+
+    def get_otp(self, obj):
+        temp_otp = random.randint(1000, 9999)
+        obj.otp = temp_otp
+        obj.save()
+        views.otp_check(temp_otp)
+        response = {'otp': temp_otp}
+        return response
 
     def get_user_job(self, obj):
         user_job_qs = Job.objects.filter(user=obj)
@@ -31,10 +42,16 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(serializer.errors)
         return serializer.data
 
+    def to_representation(self, obj):
+        # get the original representation
+        ret = super(UserSerializer, self).to_representation(obj)
+        ret.pop('otp')
+        return ret
+
     class Meta(object):
         model = User
         fields = ('id', 'email', 'first_name', 'last_name',
-                  'date_joined', 'user_job', 'password')
+                  'date_joined', 'user_job', 'password', 'verified', 'otp')
         extra_kwargs = {'password': {'write_only': True}}
 
 

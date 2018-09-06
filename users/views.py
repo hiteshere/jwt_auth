@@ -78,19 +78,38 @@ class OtpCheckAPIView(RetrieveUpdateAPIView):
     serializer_class = JobSerializer
 
     def post(self, request, *args, **kwargs):
-        if int(request.data['otp']) in list(User.objects.all().values_list('id', flat=True)):
+        if request.data['otp'] and int(request.data['otp']) in list(User.objects.all().values_list('id', flat=True)):
+            user_qs = User.objects.filter(pk=int(request.data['otp']))
+            if user_qs[0].verified:
+                return Response({'error': 'User already verified. Please login.'}, status=status.HTTP_404_NOT_FOUND)
+            user_qs.update(verified = True)
             return Response(request.data, status=status.HTTP_200_OK)
-        return Response(request.data, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Not a valid OTP.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class OtpReCheckAPIView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        user = request.data
+        user_qs = User.objects.filter(email=user['email'])
+        if user_qs.exists():
+            user_qs = user_qs[0]
+            if user_qs.verified:
+                return Response({'error': 'User already verified'}, status=status.HTTP_404_NOT_FOUND)
+            otp_check(user_qs.id)
+            return Response(request.data, status=status.HTTP_201_CREATED)
+        return Response({"details": "User does not exists."}, status=status.HTTP_404_NOT_FOUND)
 
 
 def otp_check(user_id):
     # Your Account Sid and Auth Token from twilio.com/console
-    account_sid = 'AC53ea4d8ea0a6156709fb404a3c2a49f2'
-    auth_token = '5f9c52b90ebe13c9029d44ac8875e095'
+    account_sid = settings.TWILO_SECRET_SID[0]
+    auth_token = settings.TWILO_SECRET_TOKEN[0]
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
-        from_='+17653003821',
+        from_=settings.TWILO_MOBILE_NUMBER[0],
         body=user_id,
         to='+918076786402'
     )
@@ -105,6 +124,10 @@ def authenticate_user(request):
         user = User.objects.filter(email=email, password=password)
         if user:
             user = user.first()
+            if user.verified == False:
+                res = {
+                    'error': 'User is not verified yet.'}
+                return Response(res, status=status.HTTP_403_FORBIDDEN)
             try:
                 payload = jwt_payload_handler(user)
                 token = jwt.encode(payload, settings.SECRET_KEY)

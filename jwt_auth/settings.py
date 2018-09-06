@@ -85,15 +85,17 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'jwt_auth',
-        'USER': 'kiwitech',
-        'PASSWORD': 'root',
-        'HOST': 'localhost',
+        'NAME': os.environ['JWT_AUTH_DB_NAME'],
+        'USER': os.environ['JWT_AUTH_DB_USERNAME'],
+        'PASSWORD': os.environ['JWT_AUTH_DB_PASSWORD'],
+        'HOST': os.environ['JWT_AUTH_DB_HOST'],
         'PORT': '',
     }
 }
 
-
+TWILO_SECRET_TOKEN = os.environ['TWILO_SECRET_TOKEN'],
+TWILO_SECRET_SID = os.environ['TWILO_SECRET_SID'],
+TWILO_MOBILE_NUMBER = os.environ['TWILO_MOBILE_NUMBER'],
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from .views import CreateUserAPIView, authenticate_user, UserRetrieveUpdateAPIView, JobRetrieveUpdateAPIView\
-                    , OtpCheckAPIView
+                    , OtpCheckAPIView, OtpReCheckAPIView
 
 
 urlpatterns = [
@@ -10,5 +10,7 @@ urlpatterns = [
     url(r'^dashboard_details/$', UserRetrieveUpdateAPIView.as_view()),
     url(r'^job_details/$', JobRetrieveUpdateAPIView.as_view()),
     url(r'^opt_check/$', OtpCheckAPIView.as_view()),
+    url(r'^opt_recheck/$', OtpReCheckAPIView.as_view()),
 
 ]
+

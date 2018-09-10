@@ -119,8 +119,11 @@ def otp_check(otp):
         body="User verification code is {}".format(str(otp)),
         to='+918076786402'
     )
-
-
+from jwt_auth import settings
+from django.core.mail import send_mail
+import sendgrid
+import os
+from sendgrid.helpers.mail import *
 @api_view(['POST'])
 # @permission_classes([permissions.AllowAny, ])
 def authenticate_user(request):
@@ -137,7 +140,7 @@ def authenticate_user(request):
                 return Response(res, status=status.HTTP_403_FORBIDDEN)
             try:
                 payload = jwt_payload_handler(user)
-                token = jwt.encode(payload, settings.SECRET_KEY)
+                token = jwt.encode(payload, settings.SECRET_KEY[0])
                 user_details = {}
                 user_details['name'] = "%s %s" % (
                     user.first_name, user.last_name)
@@ -146,13 +149,29 @@ def authenticate_user(request):
                 user_logged_in.send(sender=user.__class__,
                                     request=request, user=user)
                 print(user_details)
+                # message = "none"
+                # to_user = ("testmailreciever@yopmail.com",)
+                # subject = "Subject - User with name {} has requested for token".format(user_details["name"])
+                # # send_mail("subject", "Token obtainer", ["testmainsender@yopmail.com"],
+                # #           ["testmailreciever@yopmail.com"], fail_silently=False)
+                #
+                #
+                # sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+                # from_email = Email("testmainsender@yopmail.com")
+                # to_email = Email("testmailreciever@yopmail.com")
+                # # from_email = Email("test@example.com")
+                # # to_email = Email("test@example.com")
+                # subject = "Sending with SendGrid is Fun"
+                # content = Content("text/plain", "and easy to do anywhere, even with Python")
+                # mail = Mail(from_email, subject, to_email, content)
+
                 return Response(user_details, status=status.HTTP_200_OK)
 
             except Exception as e:
-                raise e
+                res = {'error': 'Something wrong with the network. Please try after some time.'}
+                return Response(res, status=status.HTTP_400_BAD_REQUEST)
         else:
-            res = {
-                'error': 'User with given credentials does not exists.'}
+            res = {'error': 'User with given credentials does not exists.'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
     except KeyError:
         res = {'error': 'please provide a email and a password'}

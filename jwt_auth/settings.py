@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ukhl!d)-zlbt&c4=wj!m+%p4cvcsfmj$q$2x#mcrmc!53^8103'
+SECRET_KEY = os.environ['SECRET_KEY'],
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', 'corsheaders',
+    'django.contrib.staticfiles',
+    'corsheaders',
     'users',
 ]
 
@@ -96,6 +97,14 @@ DATABASES = {
 TWILO_SECRET_TOKEN = os.environ['TWILO_SECRET_TOKEN'],
 TWILO_SECRET_SID = os.environ['TWILO_SECRET_SID'],
 TWILO_MOBILE_NUMBER = os.environ['TWILO_MOBILE_NUMBER'],
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net',
+EMAIL_HOST_USER = 'apikey',
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 

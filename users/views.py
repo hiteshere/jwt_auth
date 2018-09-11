@@ -85,8 +85,7 @@ class OtpCheckAPIView(RetrieveUpdateAPIView):
                 if user_qs.verified:
                     return Response({'error': 'User already verified. Please login.'}, status=status.HTTP_404_NOT_FOUND)
                 if user_qs.otp == request.data['otp']:
-                    user_qs.verified = True
-                    user_qs.save()
+                    User.objects.filter(pk=user_qs.id).update(verified=True)
                     return Response(request.data, status=status.HTTP_200_OK)
         return Response({'error': 'Not a valid OTP.'}, status=status.HTTP_404_NOT_FOUND)
 

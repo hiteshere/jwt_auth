@@ -11,6 +11,7 @@ from jwt_auth import settings
 from .serializers import UserSerializer, JobSerializer
 from .models import User, Job
 import random
+from mutual import utils
 
 class CreateUserAPIView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -103,22 +104,9 @@ class OtpReCheckAPIView(APIView):
             new_otp = random.randint(1000, 9999)
             user_qs.otp = new_otp
             user_qs.save()
-            otp_check(new_otp)
+            utils.otp_check(new_otp)
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response({"details": "User does not exists."}, status=status.HTTP_404_NOT_FOUND)
-
-
-def otp_check(otp):
-    # Your Account Sid and Auth Token from twilio.com/console
-    account_sid = settings.TWILO_SECRET_SID[0]
-    auth_token = settings.TWILO_SECRET_TOKEN[0]
-    client = Client(account_sid, auth_token)
-
-    message = client.messages.create(
-        from_=settings.TWILO_MOBILE_NUMBER[0],
-        body="User verification code is {}".format(str(otp)),
-        to='+918076786402'
-    )
 
 
 @api_view(['POST'])

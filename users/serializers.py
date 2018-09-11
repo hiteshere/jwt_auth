@@ -2,7 +2,7 @@ from rest_framework import serializers
 from users.models import User, Job
 from mutual import constant
 import random
-from users import views
+from mutual import utils
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,9 +12,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_otp(self, obj):
         temp_otp = random.randint(1000, 9999)
-        obj.otp = temp_otp
-        obj.save()
-        views.otp_check(temp_otp)
+        # obj.otp = temp_otp
+        User.objects.filter(pk=obj.id).update(otp=temp_otp)
+        utils.otp_check(temp_otp)
         response = {'otp': temp_otp}
         return response
 

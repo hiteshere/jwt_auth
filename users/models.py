@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
+from django.core.exceptions import ValidationError
 from mutual import constant
 
 
@@ -36,6 +37,14 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password=password, **extra_fields)
 
 
+class VerifiedUserManager(models.Manager):
+    """
+    Custom manager for keeping track of people verified till now
+    """
+    def get_queryset(self):
+        return super(VerifiedUserManager, self).get_queryset().filter(verified=True)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     """
     An abstract base class implementing a fully featured User model with
@@ -53,16 +62,26 @@ class User(AbstractBaseUser, PermissionsMixin):
     otp = models.CharField(max_length=4, blank=True)
 
     objects = UserManager()
+    VerifiedUser = VerifiedUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
+        self.clean()
         return self
 
     def get_short_name(self):
         return self.first_name
+
+    def clean(self):
+        """
+        Any validation of function trigger can be user here
+        :return:
+        """
+        email = self.email
+        return email
 
 
 class Job(models.Model):

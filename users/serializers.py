@@ -12,7 +12,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_otp(self, obj):
         temp_otp = random.randint(1000, 9999)
-        # obj.otp = temp_otp
+        # Using this to demo custom manager for a model
+        print("Verified user in system is "+str(User.VerifiedUser.all().count()))
         User.objects.filter(pk=obj.id).update(otp=temp_otp)
         utils.otp_check(temp_otp)
         response = {'otp': temp_otp}

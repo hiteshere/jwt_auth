@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
         print("Verified user in system is "+str(User.VerifiedUser.all().count())+" out of " +
               str(User.objects.all().count()))
         User.objects.filter(pk=obj.id).update(otp=temp_otp)
-        utils.otp_check(temp_otp)
+        utils.otp_check.delay(temp_otp)
         response = {'otp': temp_otp}
         return response
 

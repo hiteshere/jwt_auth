@@ -12,6 +12,9 @@ from .serializers import UserSerializer, JobSerializer
 from .models import User, Job
 import random
 from mutual import utils
+from celery import shared_task
+from datetime import datetime
+
 
 class CreateUserAPIView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -118,7 +121,8 @@ def authenticate_user(request):
         user = User.objects.filter(email=email, password=password)
         if user:
             user = user.first()
-            if user.verified == False:
+            user_traceback.delay(user.id)
+            if not user.verified:
                 res = {
                     'error': 'User is not verified yet.'}
                 return Response(res, status=status.HTTP_403_FORBIDDEN)
@@ -144,3 +148,17 @@ def authenticate_user(request):
     except KeyError:
         res = {'error': 'please provide a email and a password'}
         return Response(res)
+
+
+@shared_task
+def user_traceback(user_id):
+    instance = User.objects.get(pk=user_id)
+    f = open("user_traceback.txt", "a")
+    email = instance.email
+    username = instance.first_name
+    for i in range(10000):
+        if i == 1000:
+            f.write(" User with id " + str(instance.id) + " and email " + email + " at " + str(datetime.now()) +
+                    " tried to login" + "\n")
+        i+=1
+    return '{} user with name {} logging in.'.format(email, username)

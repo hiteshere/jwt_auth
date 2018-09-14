@@ -1,6 +1,7 @@
 from datetime import datetime
 from jwt_auth import settings
 from twilio.rest import Client
+from celery import shared_task
 
 
 def write_log(instance, action):
@@ -9,6 +10,7 @@ def write_log(instance, action):
     f.write(action + " with id " + str(instance.id) + " and email " + email + " at " + str(datetime.now()) + "\n")
 
 
+@shared_task
 def otp_check(otp):
     # Your Account Sid and Auth Token from twilio.com/console
     account_sid = settings.TWILO_SECRET_SID[0]
@@ -20,3 +22,4 @@ def otp_check(otp):
         body="User verification code is {}".format(str(otp)),
         to='+918076786402'
     )
+    return "OTP send for "
